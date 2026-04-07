@@ -404,7 +404,7 @@
             // 计算月度指标
             const processed = people.map(p => {
                 const dims = calculateDimensions(p, false);
-                const completion = p.completion || 0;
+                const completion = calculateTotalCompletion(p, H1_TARGETS[p.name]);
                 // 月度健康度：基于当月周数
                 const health = calculateHealth(completion, currentData.monthWeek || 1, monthData.weeks || 4);
                 return {...p, dims, completion, health};
