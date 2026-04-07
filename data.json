@@ -285,6 +285,7 @@
       "data": [
         {
           "name": "刘慧慧",
+          "type": "私域",
           "channels": 1,
           "targets": [
             {
@@ -300,6 +301,7 @@
         },
         {
           "name": "郭楚怡",
+          "type": "公域",
           "channels": 1,
           "targets": [
             {
@@ -315,6 +317,7 @@
         },
         {
           "name": "张克楠",
+          "type": "转化运营",
           "channels": 6,
           "targets": [
             {
@@ -375,6 +378,7 @@
         },
         {
           "name": "马俊波",
+          "type": "转化运营",
           "channels": 2,
           "targets": [
             {
@@ -399,6 +403,7 @@
         },
         {
           "name": "基莉",
+          "type": "转化运营",
           "channels": 3,
           "targets": [
             {
@@ -432,6 +437,7 @@
         },
         {
           "name": "徐颖",
+          "type": "转化运营",
           "channels": 1,
           "targets": [
             {
@@ -447,6 +453,7 @@
         },
         {
           "name": "杜海奎",
+          "type": "前端渠道",
           "channels": 4,
           "targets": [
             {
@@ -489,6 +496,7 @@
         },
         {
           "name": "郭思琪",
+          "type": "前端渠道",
           "channels": 2,
           "targets": [
             {
@@ -513,6 +521,7 @@
         },
         {
           "name": "王佳琦",
+          "type": "前端渠道",
           "channels": 1,
           "targets": [
             {
@@ -528,6 +537,7 @@
         },
         {
           "name": "贾鹏飞",
+          "type": "前端渠道",
           "channels": 1,
           "targets": [
             {
