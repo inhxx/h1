@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H1目标完成度看板</title>
+    <title>H1目标完成度看板 - 双维度版（H1总览 + 月度看板）</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -14,9 +14,12 @@
         .health-warning { background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%); }
         .health-danger { background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); }
         .health-critical { background: linear-gradient(135deg, #7c2d12 0%, #dc2626 100%); }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 600; }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .month-card { transition: all 0.2s; cursor: pointer; }
+        .month-card:hover { transform: scale(1.02); }
+        .month-card.active { border: 2px solid #3b82f6; background-color: #eff6ff; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -24,78 +27,79 @@
         <!-- 头部 -->
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">📊 H1目标完成度看板</h1>
-            <div class="flex justify-center items-center gap-4 text-sm">
+            <div class="flex justify-center items-center gap-4 text-sm flex-wrap">
                 <span class="text-gray-600">当前：Week <span id="currentWeek" class="font-bold text-blue-600 text-lg">--</span> / <span id="totalWeeks">26</span></span>
                 <span class="text-gray-400">|</span>
-                <span class="text-gray-600">时间进度：<span id="timeProgress">--%</span></span>
+                <span class="text-gray-600">月份：<span id="currentMonthDisplay" class="font-bold text-purple-600 text-lg">--</span></span>
                 <span class="text-gray-400">|</span>
                 <span class="text-gray-600">更新：<span id="updateDate">--</span></span>
             </div>
         </div>
 
         <!-- Tab 切换 -->
-        <div class="flex justify-center mb-6 border-b bg-white rounded-t-xl">
-            <button onclick="switchTab('overview')" id="tab-overview" class="px-6 py-3 font-semibold tab-active">📈 总览视图</button>
-            <button onclick="switchTab('weekly')" id="tab-weekly" class="px-6 py-3 font-semibold text-gray-500">📅 周进度看板</button>
-            <button onclick="switchTab('trend')" id="tab-trend" class="px-6 py-3 font-semibold text-gray-500">📉 趋势分析</button>
+        <div class="flex justify-center mb-6 border-b bg-white rounded-t-xl shadow-sm overflow-x-auto">
+            <button onclick="switchTab('overview')" id="tab-overview" class="px-4 py-3 font-semibold tab-active whitespace-nowrap">📈 H1总览</button>
+            <button onclick="switchTab('monthly')" id="tab-monthly" class="px-4 py-3 font-semibold text-gray-500 whitespace-nowrap">📅 月度看板</button>
+            <button onclick="switchTab('weekly')" id="tab-weekly" class="px-4 py-3 font-semibold text-gray-500 whitespace-nowrap">📊 周进度</button>
+            <button onclick="switchTab('trend')" id="tab-trend" class="px-4 py-3 font-semibold text-gray-500 whitespace-nowrap">📉 趋势分析</button>
         </div>
 
-        <!-- 总览视图 -->
+        <!-- H1总览视图 -->
         <div id="view-overview" class="fade-in">
             <!-- 总体概览卡片 -->
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-4 text-white card-hover">
-                    <div class="text-2xl font-bold" id="avgCompletion">--%</div>
-                    <div class="text-xs opacity-80">平均完成度</div>
+                    <div class="text-2xl font-bold" id="h1_avgCompletion">--%</div>
+                    <div class="text-xs opacity-80">H1平均完成度</div>
                 </div>
                 <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white card-hover">
-                    <div class="text-2xl font-bold" id="avgHealth">--%</div>
-                    <div class="text-xs opacity-80">平均健康度</div>
+                    <div class="text-2xl font-bold" id="h1_avgHealth">--%</div>
+                    <div class="text-xs opacity-80">H1平均健康度</div>
                 </div>
                 <div class="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl p-4 text-white card-hover">
-                    <div class="text-2xl font-bold" id="warningCount">--人</div>
-                    <div class="text-xs opacity-80">需关注</div>
+                    <div class="text-2xl font-bold" id="h1_warningCount">--人</div>
+                    <div class="text-xs opacity-80">H1需关注</div>
                 </div>
                 <div class="bg-gradient-to-br from-red-500 to-red-700 rounded-xl p-4 text-white card-hover">
-                    <div class="text-2xl font-bold" id="dangerCount">--人</div>
-                    <div class="text-xs opacity-80">严重滞后</div>
+                    <div class="text-2xl font-bold" id="h1_dangerCount">--人</div>
+                    <div class="text-xs opacity-80">H1严重滞后</div>
                 </div>
                 <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-4 text-white card-hover">
-                    <div class="text-2xl font-bold" id="topPerformer">--</div>
-                    <div class="text-xs opacity-80">最佳表现</div>
+                    <div class="text-2xl font-bold" id="h1_topPerformer">--</div>
+                    <div class="text-xs opacity-80">H1最佳表现</div>
                 </div>
             </div>
 
             <!-- 健康度分布 -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">🏥 健康度分布</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🏥 H1健康度分布</h3>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
                     <div class="p-3 rounded-lg bg-green-100">
-                        <div class="text-2xl font-bold text-green-700" id="count-excellent">0</div>
+                        <div class="text-2xl font-bold text-green-700" id="h1_count-excellent">0</div>
                         <div class="text-sm text-green-600">🟢 超前(≥110%)</div>
                     </div>
                     <div class="p-3 rounded-lg bg-blue-100">
-                        <div class="text-2xl font-bold text-blue-700" id="count-good">0</div>
+                        <div class="text-2xl font-bold text-blue-700" id="h1_count-good">0</div>
                         <div class="text-sm text-blue-600">🔵 正常(95-110%)</div>
                     </div>
                     <div class="p-3 rounded-lg bg-yellow-100">
-                        <div class="text-2xl font-bold text-yellow-700" id="count-warning">0</div>
+                        <div class="text-2xl font-bold text-yellow-700" id="h1_count-warning">0</div>
                         <div class="text-sm text-yellow-600">🟡 预警(80-95%)</div>
                     </div>
                     <div class="p-3 rounded-lg bg-orange-100">
-                        <div class="text-2xl font-bold text-orange-700" id="count-danger">0</div>
+                        <div class="text-2xl font-bold text-orange-700" id="h1_count-danger">0</div>
                         <div class="text-sm text-orange-600">🟠 滞后(60-80%)</div>
                     </div>
                     <div class="p-3 rounded-lg bg-red-100">
-                        <div class="text-2xl font-bold text-red-700" id="count-critical">0</div>
+                        <div class="text-2xl font-bold text-red-700" id="h1_count-critical">0</div>
                         <div class="text-sm text-red-600">🔴 严重(<60%)</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 详细表格 -->
+            <!-- H1详细表格 -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">📋 详细进度表（点击姓名展开渠道详情）</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">📋 H1详细进度表（3-8月汇总）</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50">
@@ -113,225 +117,401 @@
                                 <th class="px-2 py-3 text-center">状态</th>
                             </tr>
                         </thead>
-                        <tbody id="detailTable"></tbody>
+                        <tbody id="h1_detailTable"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 周进度看板 -->
-        <div id="view-weekly" class="hidden fade-in">
+        <!-- 月度看板视图 -->
+        <div id="view-monthly" class="hidden fade-in">
+            <!-- 月份选择器 -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">🔥 10人 × 26周 完成热力图</h3>
-                <div id="heatmapContainer" class="text-center text-gray-500 py-12">热力图功能开发中...</div>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">📅 选择月份</h3>
+                <div class="grid grid-cols-5 gap-4" id="monthSelector">
+                    <div class="month-card p-4 rounded-lg border-2 border-gray-200 text-center active" onclick="selectMonth('4月')" data-month="4月">
+                        <div class="text-2xl font-bold text-purple-600">4月</div>
+                        <div class="text-sm text-gray-500 mt-1">4周</div>
+                    </div>
+                    <div class="month-card p-4 rounded-lg border-2 border-gray-200 text-center" onclick="selectMonth('5月')" data-month="5月">
+                        <div class="text-2xl font-bold text-gray-400">5月</div>
+                        <div class="text-sm text-gray-400 mt-1">5周</div>
+                    </div>
+                    <div class="month-card p-4 rounded-lg border-2 border-gray-200 text-center" onclick="selectMonth('6月')" data-month="6月">
+                        <div class="text-2xl font-bold text-gray-400">6月</div>
+                        <div class="text-sm text-gray-400 mt-1">4周</div>
+                    </div>
+                    <div class="month-card p-4 rounded-lg border-2 border-gray-200 text-center" onclick="selectMonth('7月')" data-month="7月">
+                        <div class="text-2xl font-bold text-gray-400">7月</div>
+                        <div class="text-sm text-gray-400 mt-1">5周</div>
+                    </div>
+                    <div class="month-card p-4 rounded-lg border-2 border-gray-200 text-center" onclick="selectMonth('8月')" data-month="8月">
+                        <div class="text-2xl font-bold text-gray-400">8月</div>
+                        <div class="text-sm text-gray-400 mt-1">4周</div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">⚡ 本周新增完成排名</h3>
-                <canvas id="weeklyChart"></canvas>
+
+            <!-- 月度概览卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="month_currentWeek">--</div>
+                    <div class="text-xs opacity-80">当前周次</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="month_avgCompletion">--%</div>
+                    <div class="text-xs opacity-80">本月平均完成度</div>
+                </div>
+                <div class="bg-gradient-to-br from-pink-500 to-pink-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="month_avgHealth">--%</div>
+                    <div class="text-xs opacity-80">本月平均健康度</div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="month_topPerformer">--</div>
+                    <div class="text-xs opacity-80">本月最佳</div>
+                </div>
             </div>
+
+            <!-- 月度详细表格 -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">📈 累计完成趋势</h3>
-                <canvas id="cumulativeChart"></canvas>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">
+                    📋 <span id="month_tableTitle">4月</span>详细进度表
+                    <span class="text-sm font-normal text-gray-500 ml-2">(第<span id="month_weekNum">--</span>周 / 共<span id="month_totalWeeks">--</span>周)</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-2 py-3 text-left w-10"></th>
+                                <th class="px-2 py-3 text-left">排名</th>
+                                <th class="px-2 py-3 text-left">姓名</th>
+                                <th class="px-2 py-3 text-left">类型</th>
+                                <th class="px-2 py-3 text-center">渠道</th>
+                                <th class="px-2 py-3 text-right text-blue-700">目标1<br>进度</th>
+                                <th class="px-2 py-3 text-right text-green-700">目标2<br>进度</th>
+                                <th class="px-2 py-3 text-right text-purple-700">目标3<br>进度</th>
+                                <th class="px-2 py-3 text-center">总完成</th>
+                                <th class="px-2 py-3 text-center">健康度</th>
+                                <th class="px-2 py-3 text-center">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="month_detailTable"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- 趋势分析 -->
+        <!-- 周进度视图 -->
+        <div id="view-weekly" class="hidden fade-in">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🔥 10人 × 26周 完成热力图</h3>
+                <div id="heatmapContainer" class="text-center text-gray-500 py-12">功能开发中...</div>
+            </div>
+        </div>
+
+        <!-- 趋势分析视图 -->
         <div id="view-trend" class="hidden fade-in">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">📊 个人完成趋势</h3>
-                    <select id="personSelect" class="w-full p-2 border rounded mb-4">
-                        <option>选择人员...</option>
-                    </select>
-                    <div class="text-center text-gray-500 py-12">趋势分析功能开发中...</div>
+                    <div class="text-center text-gray-500 py-12">功能开发中...</div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">🔮 完成预测</h3>
-                    <div class="text-center text-gray-500 py-12">预测功能开发中...</div>
+                    <div class="text-center text-gray-500 py-12">功能开发中...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // ========== 配置 ==========
         const TOTAL_WEEKS = 26;
         let currentData = null;
+        let currentMonth = '4月';
 
-        // 目标配置（含郭楚怡更新）
-        const TARGETS_CONFIG = {
-            "刘慧慧": { weights: [0.5, 0.25, 0.25] },
-            "郭楚怡": { weights: [0.4, 0.3, 0.3] }, // 已更新
-            "张克楠": { isMulti: true, weights: [0.4, 0.3, 0.3], channelWeights: [0.407, 0.165, 0.113, 0.259, 0.045, 0.011] },
-            "马俊波": { isMulti: true, weights: [0.4, 0.3, 0.3], channelWeights: [0.582, 0.418] },
-            "基莉": { isMulti: true, weights: [0.4, 0.3, 0.3], channelWeights: [0.433, 0.316, 0.251] },
-            "徐颖": { weights: [0.4, 0.3, 0.3] },
-            "杜海奎": { isMulti: true, weights: [0.4, 0.2, 0.4], channelWeights: [0.278, 0.636, 0.071, 0.015] },
-            "郭思琪": { isMulti: true, weights: [0.3, 0.4, 0.3], channelWeights: [0.758, 0.242] },
-            "王佳琦": { weights: [0.3, 0.4, 0.3] },
-            "贾鹏飞": { weights: [0.3, 0.4, 0.3] }
+        // 目标配置（H1总目标）
+        const H1_TARGETS = {
+            "刘慧慧": {"type": "私域", "channels": 1, "weights": [0.5, 0.25, 0.25]},
+            "郭楚怡": {"type": "公域", "channels": 1, "weights": [0.4, 0.3, 0.3]},
+            "张克楠": {"type": "转化运营", "isMulti": true, "weights": [0.4, 0.3, 0.3], "channelWeights": [0.407, 0.165, 0.113, 0.259, 0.045, 0.011]},
+            "马俊波": {"type": "转化运营", "isMulti": true, "weights": [0.4, 0.3, 0.3], "channelWeights": [0.582, 0.418]},
+            "基莉": {"type": "转化运营", "isMulti": true, "weights": [0.4, 0.3, 0.3], "channelWeights": [0.433, 0.316, 0.251]},
+            "徐颖": {"type": "转化运营", "channels": 1, "weights": [0.4, 0.3, 0.3]},
+            "杜海奎": {"type": "前端投放", "isMulti": true, "weights": [0.4, 0.2, 0.4], "channelWeights": [0.278, 0.636, 0.071, 0.015]},
+            "郭思琪": {"type": "前端投放", "isMulti": true, "weights": [0.3, 0.4, 0.3], "channelWeights": [0.758, 0.242]},
+            "王佳琦": {"type": "前端投放", "channels": 1, "weights": [0.3, 0.4, 0.3]},
+            "贾鹏飞": {"type": "前端投放", "channels": 1, "weights": [0.3, 0.4, 0.3]}
         };
 
+        // 月份配置
+        const MONTH_CONFIG = {
+            "4月": {weeks: 4, color: "purple"},
+            "5月": {weeks: 5, color: "gray"},
+            "6月": {weeks: 4, color: "gray"},
+            "7月": {weeks: 5, color: "gray"},
+            "8月": {weeks: 4, color: "gray"}
+        };
+
+        // ========== 加载数据 ==========
         async function loadData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 const data = await response.json();
                 currentData = data;
                 
-                document.getElementById('currentWeek').textContent = data.currentWeek;
-                document.getElementById('timeProgress').textContent = ((data.currentWeek / TOTAL_WEEKS) * 100).toFixed(1) + '%';
-                document.getElementById('updateDate').textContent = data.date;
+                // 更新头部信息
+                document.getElementById('currentWeek').textContent = data.currentWeek || '--';
+                document.getElementById('currentMonthDisplay').textContent = data.currentMonth || '4月';
+                document.getElementById('updateDate').textContent = data.date || '--';
                 
-                updateOverview(data);
+                // 更新H1总览
+                updateH1Overview(data.h1 || data);
+                
+                // 更新月度看板
+                updateMonthlyView(data.monthly || {});
+                
             } catch (error) {
                 console.error('加载失败:', error);
-                document.getElementById('detailTable').innerHTML = '<tr><td colspan="11" class="text-center py-8 text-red-500">数据加载失败，请检查 data.json 是否存在</td></tr>';
+                document.getElementById('h1_detailTable').innerHTML = 
+                    '<tr><td colspan="11" class="text-center py-8 text-red-500">数据加载失败，请检查 data.json 是否存在</td></tr>';
             }
         }
 
-        function calculatePersonMetrics(person) {
-            const config = TARGETS_CONFIG[person.name];
+        // ========== 计算维度进度 ==========
+        function calculateDimensions(person, isH1 = true) {
+            const config = H1_TARGETS[person.name];
             const targets = person.targets;
             
-            let dim1 = 0, dim2 = 0, dim3 = 0, totalCompletion = 0;
+            let dim1 = 0, dim2 = 0, dim3 = 0;
             
             if (config.isMulti) {
-                // 多Channel人员
+                // 多Channel：加权平均
                 for (let i = 0; i < targets.length; i++) {
                     const t = targets[i];
                     const w = config.channelWeights[i];
-                    
-                    const c1 = ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * config.weights[0];
-                    const c2 = t.target2 ? ((t.actual2 || 0) / t.target2) * config.weights[1] : 0;
-                    const c3 = t.target3 ? ((t.actual3 || 0) / t.target3) * config.weights[2] : 0;
-                    
                     dim1 += ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * w * 100;
                     if (t.target2) dim2 += ((t.actual2 || 0) / t.target2) * w * 100;
                     if (t.target3) dim3 += ((t.actual3 || 0) / t.target3) * w * 100;
-                    
-                    totalCompletion += (c1 + c2 + c3) * w * 100;
                 }
             } else {
-                // 单Channel人员
+                // 单Channel：直接计算
                 const t = targets[0];
-                const c1 = ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * config.weights[0];
-                const c2 = t.target2 ? ((t.actual2 || 0) / t.target2) * config.weights[1] : 0;
-                const c3 = t.target3 ? ((t.actual3 || 0) / t.target3) * config.weights[2] : 0;
-                
                 dim1 = ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * 100;
                 dim2 = t.target2 ? ((t.actual2 || 0) / t.target2) * 100 : 0;
                 dim3 = t.target3 ? ((t.actual3 || 0) / t.target3) * 100 : 0;
-                
-                totalCompletion = (c1 + c2 + c3) * 100;
             }
-            
-            // 健康度 = 总完成度 / 时间进度
-            const timeProgress = currentData.currentWeek / TOTAL_WEEWS;
-            const healthScore = timeProgress > 0 ? (totalCompletion / 100) / timeProgress * 100 : 0;
-            
-            let healthClass = 'health-critical';
-            let healthStatus = '严重滞后';
-            if (healthScore >= 110) { healthClass = 'health-excellent'; healthStatus = '超前'; }
-            else if (healthScore >= 95) { healthClass = 'health-good'; healthStatus = '正常'; }
-            else if (healthScore >= 80) { healthClass = 'health-warning'; healthStatus = '预警'; }
-            else if (healthScore >= 60) { healthClass = 'health-danger'; healthStatus = '滞后'; }
             
             return {
                 dim1: dim1.toFixed(1),
                 dim2: dim2 > 0 ? dim2.toFixed(1) : '-',
-                dim3: dim3 > 0 ? dim3.toFixed(1) : '-',
-                totalCompletion: totalCompletion.toFixed(1),
-                healthScore: healthScore.toFixed(1),
-                healthClass,
-                healthStatus
+                dim3: dim3 > 0 ? dim3.toFixed(1) : '-'
             };
         }
 
-        function updateOverview(data) {
-            const people = data.data.map(person => {
-                const metrics = calculatePersonMetrics(person);
-                return { ...person, ...metrics };
-            }).sort((a, b) => b.healthScore - a.healthScore);
+        // ========== 计算总完成度 ==========
+        function calculateTotalCompletion(person) {
+            const config = H1_TARGETS[person.name];
+            const targets = person.targets;
+            
+            let total = 0;
+            
+            if (config.isMulti) {
+                const completions = [];
+                for (let i = 0; i < targets.length; i++) {
+                    const t = targets[i];
+                    const c1 = ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * config.weights[0];
+                    const c2 = t.target2 ? ((t.actual2 || 0) / t.target2) * config.weights[1] : 0;
+                    const c3 = t.target3 ? ((t.actual3 || 0) / t.target3) * config.weights[2] : 0;
+                    completions.push(c1 + c2 + c3);
+                }
+                // 加权平均
+                const weights = config.channelWeights;
+                total = completions.reduce((sum, c, i) => sum + c * weights[i], 0) * 100;
+            } else {
+                const t = targets[0];
+                const c1 = ((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1)) * config.weights[0];
+                const c2 = t.target2 ? ((t.actual2 || 0) / t.target2) * config.weights[1] : 0;
+                const c3 = t.target3 ? ((t.actual3 || 0) / t.target3) * config.weights[2] : 0;
+                total = (c1 + c2 + c3) * 100;
+            }
+            
+            return Math.min(total, 150);
+        }
 
+        // ========== 计算健康度 ==========
+        function calculateHealth(totalCompletion, currentWeek, totalWeeks = 26) {
+            const timeProgress = currentWeek / totalWeeks;
+            const healthScore = timeProgress > 0 ? (totalCompletion / 100) / timeProgress * 100 : 0;
+            
+            if (healthScore >= 110) return {score: healthScore.toFixed(1), status: '超前', code: 'excellent', class: 'health-excellent'};
+            if (healthScore >= 95) return {score: healthScore.toFixed(1), status: '正常', code: 'good', class: 'health-good'};
+            if (healthScore >= 80) return {score: healthScore.toFixed(1), status: '预警', code: 'warning', class: 'health-warning'};
+            if (healthScore >= 60) return {score: healthScore.toFixed(1), status: '滞后', code: 'danger', class: 'health-danger'};
+            return {score: healthScore.toFixed(1), status: '严重滞后', code: 'critical', class: 'health-critical'};
+        }
+
+        // ========== 更新H1总览 ==========
+        function updateH1Overview(h1Data) {
+            const people = h1Data.data || [];
+            
+            // 计算每个人的指标
+            const processed = people.map(p => {
+                const dims = calculateDimensions(p, true);
+                const completion = calculateTotalCompletion(p);
+                const health = calculateHealth(completion, currentData.currentWeek, 26);
+                return {...p, dims, completion, health};
+            }).sort((a, b) => b.health.score - a.health.score);
+            
             // 更新卡片
-            const avgCompletion = people.reduce((sum, p) => sum + parseFloat(p.totalCompletion), 0) / people.length;
-            const avgHealth = people.reduce((sum, p) => sum + parseFloat(p.healthScore), 0) / people.length;
+            const avgCompletion = processed.reduce((sum, p) => sum + p.completion, 0) / processed.length;
+            const avgHealth = processed.reduce((sum, p) => sum + parseFloat(p.health.score), 0) / processed.length;
             
-            document.getElementById('avgCompletion').textContent = avgCompletion.toFixed(1) + '%';
-            document.getElementById('avgHealth').textContent = avgHealth.toFixed(1) + '%';
-            document.getElementById('topPerformer').textContent = people[0]?.name || '-';
+            document.getElementById('h1_avgCompletion').textContent = avgCompletion.toFixed(1) + '%';
+            document.getElementById('h1_avgHealth').textContent = avgHealth.toFixed(1) + '%';
+            document.getElementById('h1_topPerformer').textContent = processed[0]?.name || '--';
             
+            // 健康度分布统计
             const counts = {
-                excellent: people.filter(p => p.healthScore >= 110).length,
-                good: people.filter(p => p.healthScore >= 95 && p.healthScore < 110).length,
-                warning: people.filter(p => p.healthScore >= 80 && p.healthScore < 95).length,
-                danger: people.filter(p => p.healthScore >= 60 && p.healthScore < 80).length,
-                critical: people.filter(p => p.healthScore < 60).length
+                excellent: processed.filter(p => parseFloat(p.health.score) >= 110).length,
+                good: processed.filter(p => parseFloat(p.health.score) >= 95 && parseFloat(p.health.score) < 110).length,
+                warning: processed.filter(p => parseFloat(p.health.score) >= 80 && parseFloat(p.health.score) < 95).length,
+                danger: processed.filter(p => parseFloat(p.health.score) >= 60 && parseFloat(p.health.score) < 80).length,
+                critical: processed.filter(p => parseFloat(p.health.score) < 60).length
             };
             
-            document.getElementById('count-excellent').textContent = counts.excellent;
-            document.getElementById('count-good').textContent = counts.good;
-            document.getElementById('count-warning').textContent = counts.warning;
-            document.getElementById('warningCount').textContent = counts.warning + '人';
-            document.getElementById('count-danger').textContent = counts.danger;
-            document.getElementById('dangerCount').textContent = counts.danger + counts.critical + '人';
-            document.getElementById('count-critical').textContent = counts.critical;
-
+            ['excellent', 'good', 'warning', 'danger', 'critical'].forEach(code => {
+                document.getElementById(`h1_count-${code}`).textContent = counts[code];
+            });
+            document.getElementById('h1_warningCount').textContent = counts.warning + '人';
+            document.getElementById('h1_dangerCount').textContent = (counts.danger + counts.critical) + '人';
+            
             // 更新表格
-            const tbody = document.getElementById('detailTable');
-            tbody.innerHTML = people.map((p, idx) => `
-                <tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="toggleDetail('detail-${idx}')">
-                    <td class="px-2 py-3 text-center"><button class="w-6 h-6 rounded-full bg-gray-200 text-xs font-bold detail-btn">+</button></td>
-                    <td class="px-2 py-3 font-bold">${idx + 1}</td>
-                    <td class="px-2 py-3 font-semibold text-blue-600">${p.name}</td>
-                    <td class="px-2 py-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.type}</span></td>
-                    <td class="px-2 py-3 text-center">${p.targets.length}</td>
-                    <td class="px-2 py-3 text-right font-semibold text-blue-700">${p.dim1}%</td>
-                    <td class="px-2 py-3 text-right font-semibold text-green-700">${p.dim2}%</td>
-                    <td class="px-2 py-3 text-right font-semibold text-purple-700">${p.dim3}%</td>
-                    <td class="px-2 py-3 text-right font-bold">${p.totalCompletion}%</td>
-                    <td class="px-2 py-3 text-center"><div class="inline-block px-2 py-1 rounded text-xs font-bold text-white ${p.healthClass}">${p.healthScore}%</div></td>
-                    <td class="px-2 py-3 text-center text-lg">${p.healthScore >= 110 ? '🟢' : p.healthScore >= 95 ? '🔵' : p.healthScore >= 80 ? '🟡' : p.healthScore >= 60 ? '🟠' : '🔴'}</td>
-                </tr>
-                <tr id="detail-${idx}" class="hidden bg-gray-50">
-                    <td colspan="11" class="p-4">
-                        <div class="text-sm font-semibold text-gray-600 mb-3">${p.name} - ${p.targets.length}个渠道详情</div>
-                        <div class="grid gap-3">
-                            ${p.targets.map(t => `
-                                <div class="bg-white p-3 rounded border">
-                                    <div class="font-medium text-gray-700 mb-2">📍 ${t.name}</div>
-                                    <div class="grid grid-cols-3 gap-4 text-xs">
-                                        <div class="p-2 bg-blue-50 rounded">
-                                            <div class="text-gray-500">目标1: ${(t.target || t.target1 || 0).toLocaleString()}</div>
-                                            <div class="font-semibold text-blue-700">实际: ${(t.actual || t.actual1 || 0).toLocaleString()}</div>
-                                            <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width: ${Math.min(((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1) * 100), 100)}%"></div></div>
-                                            <div class="text-right text-blue-600 mt-1">${((t.actual || t.actual1 || 0) / (t.target || t.target1 || 1) * 100).toFixed(1)}%</div>
-                                        </div>
-                                        ${t.target2 ? `
-                                        <div class="p-2 bg-green-50 rounded">
-                                            <div class="text-gray-500">目标2: ${t.target2.toLocaleString()}</div>
-                                            <div class="font-semibold text-green-700">实际: ${(t.actual2 || 0).toLocaleString()}</div>
-                                            <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5"><div class="bg-green-500 h-1.5 rounded-full" style="width: ${Math.min(((t.actual2 || 0) / t.target2 * 100), 100)}%"></div></div>
-                                            <div class="text-right text-green-600 mt-1">${((t.actual2 || 0) / t.target2 * 100).toFixed(1)}%</div>
-                                        </div>` : '<div class="p-2 bg-gray-50 rounded text-gray-400 text-center">无目标2</div>'}
-                                        ${t.target3 ? `
-                                        <div class="p-2 bg-purple-50 rounded">
-                                            <div class="text-gray-500">目标3: ${t.target3.toLocaleString()}</div>
-                                            <div class="font-semibold text-purple-700">实际: ${(t.actual3 || 0).toLocaleString()}</div>
-                                            <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5"><div class="bg-purple-500 h-1.5 rounded-full" style="width: ${Math.min(((t.actual3 || 0) / t.target3 * 100), 100)}%"></div></div>
-                                            <div class="text-right text-purple-600 mt-1">${((t.actual3 || 0) / t.target3 * 100).toFixed(1)}%</div>
-                                        </div>` : '<div class="p-2 bg-gray-50 rounded text-gray-400 text-center">无目标3</div>'}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            updateDetailTable('h1_detailTable', processed, 'h1');
         }
 
-        function toggleDetail(id) {
-            const row = document.getElementById(id);
+        // ========== 更新月度看板 ==========
+        function updateMonthlyView(monthlyData) {
+            const monthData = monthlyData[currentMonth] || {weeks: 4, data: []};
+            const people = monthData.data || [];
+            
+            // 更新月份信息
+            document.getElementById('month_currentWeek').textContent = `第${currentData.monthWeek || '--'}周`;
+            document.getElementById('month_tableTitle').textContent = currentMonth;
+            document.getElementById('month_weekNum').textContent = currentData.monthWeek || '--';
+            document.getElementById('month_totalWeeks').textContent = monthData.weeks || '--';
+            
+            // 计算月度指标
+            const processed = people.map(p => {
+                const dims = calculateDimensions(p, false);
+                const completion = p.completion || 0;
+                // 月度健康度：基于当月周数
+                const health = calculateHealth(completion, currentData.monthWeek || 1, monthData.weeks || 4);
+                return {...p, dims, completion, health};
+            }).sort((a, b) => b.health.score - a.health.score);
+            
+            // 更新月度卡片
+            const avgCompletion = processed.length > 0 ? processed.reduce((sum, p) => sum + p.completion, 0) / processed.length : 0;
+            const avgHealth = processed.length > 0 ? processed.reduce((sum, p) => sum + parseFloat(p.health.score), 0) / processed.length : 0;
+            
+            document.getElementById('month_avgCompletion').textContent = avgCompletion.toFixed(1) + '%';
+            document.getElementById('month_avgHealth').textContent = avgHealth.toFixed(1) + '%';
+            document.getElementById('month_topPerformer').textContent = processed[0]?.name || '--';
+            
+            // 更新月度表格
+            updateDetailTable('month_detailTable', processed, 'month');
+        }
+
+        // ========== 更新详细表格 ==========
+        function updateDetailTable(tableId, people, prefix) {
+            const tbody = document.getElementById(tableId);
+            
+            tbody.innerHTML = people.map((p, idx) => {
+                const statusEmoji = p.health.code === 'excellent' ? '🟢' : 
+                                   p.health.code === 'good' ? '🔵' : 
+                                   p.health.code === 'warning' ? '🟡' : 
+                                   p.health.code === 'danger' ? '🟠' : '🔴';
+                
+                const detailId = `${prefix}-detail-${idx}`;
+                
+                // 生成渠道详情
+                const channelDetails = p.targets.map(t => `
+                    <div class="mb-2 p-2 bg-white rounded border text-xs">
+                        <div class="font-medium mb-1">📍 ${t.name}</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>目标1: ${(t.target || t.target1 || 0).toLocaleString()} → ${(t.actual || t.actual1 || 0).toLocaleString()}</div>
+                            ${t.target2 ? `<div>目标2: ${t.target2.toLocaleString()} → ${(t.actual2 || 0).toLocaleString()}</div>` : '<div class="text-gray-400">-</div>'}
+                            ${t.target3 ? `<div>目标3: ${t.target3.toLocaleString()} → ${(t.actual3 || 0).toLocaleString()}</div>` : '<div class="text-gray-400">-</div>'}
+                        </div>
+                    </div>
+                `).join('');
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="toggleDetail('${detailId}')">
+                        <td class="px-2 py-3 text-center"><button class="w-6 h-6 rounded-full bg-gray-200 text-xs font-bold detail-btn">+</button></td>
+                        <td class="px-2 py-3 font-bold">${idx + 1}</td>
+                        <td class="px-2 py-3 font-semibold text-blue-600">${p.name}</td>
+                        <td class="px-2 py-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.type}</span></td>
+                        <td class="px-2 py-3 text-center">${p.targets.length}</td>
+                        <td class="px-2 py-3 text-right font-semibold text-blue-700">${p.dims.dim1}%</td>
+                        <td class="px-2 py-3 text-right font-semibold text-green-700">${p.dims.dim2}%</td>
+                        <td class="px-2 py-3 text-right font-semibold text-purple-700">${p.dims.dim3}%</td>
+                        <td class="px-2 py-3 text-right font-bold">${p.completion.toFixed(1)}%</td>
+                        <td class="px-2 py-3 text-center"><div class="inline-block px-2 py-1 rounded text-xs font-bold text-white ${p.health.class}">${p.health.score}%</div></td>
+                        <td class="px-2 py-3 text-center text-lg">${statusEmoji}</td>
+                    </tr>
+                    <tr id="${detailId}" class="hidden bg-gray-50">
+                        <td colspan="11" class="p-4">
+                            <div class="text-sm font-semibold text-gray-600 mb-2">${p.name} - ${p.targets.length}个渠道详情</div>
+                            <div class="max-h-60 overflow-y-auto">${channelDetails}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== 切换月份 ==========
+        function selectMonth(month) {
+            currentMonth = month;
+            
+            // 更新UI
+            document.querySelectorAll('.month-card').forEach(card => {
+                card.classList.remove('active');
+                card.querySelector('.text-2xl').classList.remove('text-purple-600');
+                card.querySelector('.text-2xl').classList.add('text-gray-400');
+            });
+            
+            const activeCard = document.querySelector(`.month-card[data-month="${month}"]`);
+            if (activeCard) {
+                activeCard.classList.add('active');
+                activeCard.querySelector('.text-2xl').classList.remove('text-gray-400');
+                activeCard.querySelector('.text-2xl').classList.add('text-purple-600');
+            }
+            
+            // 重新加载月度数据
+            if (currentData && currentData.monthly) {
+                updateMonthlyView(currentData.monthly);
+            }
+        }
+
+        // ========== Tab切换 ==========
+        function switchTab(tabName) {
+            ['overview', 'monthly', 'weekly', 'trend'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active');
+                document.getElementById(`tab-${t}`).classList.add('text-gray-500');
+            });
+            
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-500');
+        }
+
+        // ========== 展开/折叠详情 ==========
+        function toggleDetail(detailId) {
+            const row = document.getElementById(detailId);
             const btn = row.previousElementSibling.querySelector('.detail-btn');
+            
             if (row.classList.contains('hidden')) {
                 row.classList.remove('hidden');
                 btn.textContent = '-';
@@ -345,17 +525,7 @@
             }
         }
 
-        function switchTab(tabName) {
-            ['overview', 'weekly', 'trend'].forEach(t => {
-                document.getElementById(`view-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('tab-active');
-                document.getElementById(`tab-${t}`).classList.add('text-gray-500');
-            });
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
-            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-500');
-        }
-
+        // ========== 初始化 ==========
         window.onload = loadData;
     </script>
 </body>
