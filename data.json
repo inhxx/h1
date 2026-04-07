@@ -170,8 +170,8 @@
             "actual": 6934,
             "target2": 35000,
             "actual2": 12370.9,
-            "target3": 100%,
-            "actual3": 10%
+            "target3": 0,
+            "actual3": 0
           }
         ]
       },
