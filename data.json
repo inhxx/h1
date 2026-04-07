@@ -1,1 +1,28 @@
+{
+  "week": 1,
+  "date": "2026-04-07",
+  "data": [
+    {
+      "name": "刘慧慧",
+      "type": "私域",
+      "targets": [
+        {"name": "正价人次", "target": 900, "actual": 120},
+        {"name": "新增粉丝", "target": 60000, "actual": 8500},
+        {"name": "企微新增", "target": 1500, "actual": 180}
+      ],
+      "completion": 58.5
+    },
+    {
+      "name": "郭楚怡",
+      "type": "公域", 
+      "targets": [
+        {"name": "Leads量", "target": 500, "actual": 520},
+        {"name": "正价人次", "target": 750, "actual": 45},
+        {"name": "企微新增", "target": 2000, "actual": 450}
+      ],
+      "completion": 62.3
+    }
+    // ... 其他人数据
+  ]
+}
 
