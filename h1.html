@@ -3,205 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H1目标完成度看板 </title>
+    <title>H1目标完成度看板</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .fade-in { animation: fadeIn 0.6s ease-in; }
+        .health-excellent { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .health-good { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .health-warning { background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%); }
+        .health-danger { background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); }
+        .health-critical { background: linear-gradient(135deg, #7c2d12 0%, #dc2626 100%); }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-6">
         <!-- 头部 -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">📊 H1目标完成度看板</h1>
-            <p class="text-gray-600">Week <span id="weekNum" class="font-bold text-blue-600">--</span> 数据更新于 <span id="updateDate" class="font-bold">--</span></p>
-            <div class="mt-4 text-sm text-gray-500">
-                <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>优秀(≥120%)
-                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full mx-1"></span>良好(100-120%)
-                <span class="inline-block w-3 h-3 bg-red-500 rounded-full mx-1"></span>需关注(&lt;90%)
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">📊 H1目标完成度看板</h1>
+            <div class="flex justify-center items-center gap-4 text-sm">
+                <span class="text-gray-600">当前：Week <span id="currentWeek" class="font-bold text-blue-600 text-lg">--</span> / <span id="totalWeeks">26</span></span>
+                <span class="text-gray-400">|</span>
+                <span class="text-gray-600">时间进度：<span id="timeProgress" class="font-bold">--%</span></span>
+                <span class="text-gray-400">|</span>
+                <span class="text-gray-600">数据更新：<span id="updateDate">--</span></span>
             </div>
         </div>
 
-        <!-- 总体概览 -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-6 text-white card-hover">
-                <div class="text-3xl font-bold" id="avgCompletion">--%</div>
-                <div class="text-sm opacity-80">平均完成度</div>
+        <!-- Tab 切换 -->
+        <div class="flex justify-center mb-6 border-b">
+            <button onclick="switchTab('overview')" id="tab-overview" class="px-6 py-3 font-semibold tab-active">📈 总览视图</button>
+            <button onclick="switchTab('weekly')" id="tab-weekly" class="px-6 py-3 font-semibold text-gray-500">📅 周进度看板</button>
+            <button onclick="switchTab('trend')" id="tab-trend" class="px-6 py-3 font-semibold text-gray-500">📉 趋势分析</button>
+        </div>
+
+        <!-- 总览视图 -->
+        <div id="view-overview" class="fade-in">
+            <!-- 总体概览卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="avgCompletion">--%</div>
+                    <div class="text-xs opacity-80">平均完成度</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="avgHealth">--%</div>
+                    <div class="text-xs opacity-80">平均健康度</div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="warningCount">--人</div>
+                    <div class="text-xs opacity-80">需关注</div>
+                </div>
+                <div class="bg-gradient-to-br from-red-500 to-red-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="dangerCount">--人</div>
+                    <div class="text-xs opacity-80">严重滞后</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-4 text-white card-hover">
+                    <div class="text-2xl font-bold" id="topPerformer">--</div>
+                    <div class="text-xs opacity-80">最佳表现</div>
+                </div>
             </div>
-            <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-6 text-white card-hover">
-                <div class="text-3xl font-bold" id="topPerformer">--</div>
-                <div class="text-sm opacity-80">最佳表现</div>
+
+            <!-- 健康度分布图 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🏥 健康度分布</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                    <div class="p-3 rounded-lg bg-green-100">
+                        <div class="text-2xl font-bold text-green-700" id="count-excellent">0</div>
+                        <div class="text-sm text-green-600">🟢 超前(≥110%)</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-blue-100">
+                        <div class="text-2xl font-bold text-blue-700" id="count-good">0</div>
+                        <div class="text-sm text-blue-600">🔵 正常(95-110%)</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-yellow-100">
+                        <div class="text-2xl font-bold text-yellow-700" id="count-warning">0</div>
+                        <div class="text-sm text-yellow-600">🟡 预警(80-95%)</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-orange-100">
+                        <div class="text-2xl font-bold text-orange-700" id="count-danger">0</div>
+                        <div class="text-sm text-orange-600">🟠 滞后(60-80%)</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-red-100">
+                        <div class="text-2xl font-bold text-red-700" id="count-critical">0</div>
+                        <div class="text-sm text-red-600">🔴 严重(<60%)</div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-6 text-white card-hover">
-                <div class="text-3xl font-bold" id="needAttention">--人</div>
-                <div class="text-sm opacity-80">需关注(&lt;70%)</div>
-            </div>
-            <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl p-6 text-white card-hover">
-                <div class="text-3xl font-bold" id="totalPeople">10人</div>
-                <div class="text-sm opacity-80">总人数</div>
+
+            <!-- 详细表格（带健康度） -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">📋 详细进度表</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-3 text-left">排名</th>
+                                <th class="px-3 py-3 text-left">姓名</th>
+                                <th class="px-3 py-3 text-left">类型</th>
+                                <th class="px-3 py-3 text-right">总目标</th>
+                                <th class="px-3 py-3 text-right">累计完成</th>
+                                <th class="px-3 py-3 text-right">完成进度</th>
+                                <th class="px-3 py-3 text-right">时间进度</th>
+                                <th class="px-3 py-3 text-center">健康度</th>
+                                <th class="px-3 py-3 text-center">状态</th>
+                                <th class="px-3 py-3 text-right">剩余压力</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailTable"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- 图表区域 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">🏆 个人完成度排名</h3>
-                <canvas id="rankingChart"></canvas>
+        <!-- 周进度看板 -->
+        <div id="view-weekly" class="hidden fade-in">
+            <!-- 周进度热力图 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🔥 10人 × 26周 完成热力图</h3>
+                <div id="heatmapContainer" class="overflow-x-auto">
+                    <!-- 动态生成热力图 -->
+                </div>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">📈 分类完成情况</h3>
-                <canvas id="categoryChart"></canvas>
+
+            <!-- 本周新增排名 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">⚡ Week <span class="current-week">--</span> 新增完成排名</h3>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+
+            <!-- 历史累计曲线 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">📈 累计完成趋势（vs 理论进度）</h3>
+                <canvas id="cumulativeChart"></canvas>
             </div>
         </div>
 
-        <!-- 详细数据表格 -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">📋 详细完成情况（只读）</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">排名</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">姓名</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">类型</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">目标/渠道</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold text-right">目标值</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold text-right">实际完成</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">完成度</th>
-                            <th class="px-4 py-3 text-gray-600 font-semibold">状态</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detailTable"></tbody>
-                </table>
+        <!-- 趋势分析 -->
+        <div id="view-trend" class="hidden fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📊 个人完成趋势</h3>
+                    <select id="personSelect" onchange="updatePersonTrend()" class="w-full p-2 border rounded mb-4">
+                        <option value="">选择人员...</option>
+                    </select>
+                    <canvas id="personTrendChart"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🔮 完成预测</h3>
+                    <div id="predictionContent" class="space-y-3">
+                        <!-- 动态生成预测内容 -->
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- 管理员提示 -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center text-sm text-blue-700">
-            <p>💡 此页面为<strong>只读展示</strong>，如需更新数据请联系管理员</p>
-            <p class="mt-1 text-xs text-blue-500">数据每周一更新 | 当前为 Week <span id="weekNum2">--</span> 数据</p>
         </div>
     </div>
 
     <script>
-        // 从JSON文件加载数据
+        // ========== 配置 ==========
+        const TOTAL_WEEKS = 26;
+        let currentData = null;
+        let historyData = {};
+
+        // ========== 健康度计算 ==========
+        function calculateHealth(actual, target, currentWeek) {
+            const timeProgress = currentWeek / TOTAL_WEEKS;
+            const completionProgress = actual / target;
+            const healthScore = (completionProgress / timeProgress) * 100;
+            
+            let status, color, className;
+            if (healthScore >= 110) {
+                status = '超前'; color = '#059669'; className = 'health-excellent';
+            } else if (healthScore >= 95) {
+                status = '正常'; color = '#3b82f6'; className = 'health-good';
+            } else if (healthScore >= 80) {
+                status = '预警'; color = '#d97706'; className = 'health-warning';
+            } else if (healthScore >= 60) {
+                status = '滞后'; color = '#dc2626'; className = 'health-danger';
+            } else {
+                status = '严重滞后'; color = '#7c2d12'; className = 'health-critical';
+            }
+            
+            return {
+                score: healthScore,
+                status: status,
+                color: color,
+                className: className,
+                timeProgress: timeProgress * 100,
+                completionProgress: completionProgress * 100
+            };
+        }
+
+        // ========== 加载数据 ==========
         async function loadData() {
             try {
-                const response = await fetch('data.json?v=' + Date.now()); // 加时间戳防止缓存
+                const response = await fetch('data.json?t=' + Date.now());
                 const data = await response.json();
                 
-                document.getElementById('weekNum').textContent = data.week;
-                document.getElementById('weekNum2').textContent = data.week;
-                document.getElementById('updateDate').textContent = data.date;
+                currentData = data.current || data;
+                historyData = data.history || {};
+                const currentWeek = data.currentWeek || 14;
                 
-                updateDashboard(data.data);
+                document.getElementById('currentWeek').textContent = currentWeek;
+                document.getElementById('totalWeeks').textContent = data.totalWeeks || TOTAL_WEEKS;
+                document.getElementById('timeProgress').textContent = ((currentWeek / TOTAL_WEEKS) * 100).toFixed(1) + '%';
+                document.getElementById('updateDate').textContent = data.date;
+                document.querySelectorAll('.current-week').forEach(el => el.textContent = currentWeek);
+                
+                updateOverview(currentWeek);
+                updateWeeklyView(currentWeek);
+                updateTrendView();
+                
             } catch (error) {
-                console.error('加载数据失败:', error);
-                document.getElementById('detailTable').innerHTML = 
-                    '<tr><td colspan="8" class="px-4 py-8 text-center text-red-500">数据加载失败，请检查 data.json 文件是否存在</td></tr>';
+                console.error('加载失败:', error);
             }
         }
 
-        function updateDashboard(peopleData) {
-            // 按完成度排序
-            const sortedData = peopleData.sort((a, b) => b.completion - a.completion);
-            
-            // 更新概览卡片
-            const avg = sortedData.reduce((sum, p) => sum + p.completion, 0) / sortedData.length;
-            document.getElementById('avgCompletion').textContent = avg.toFixed(1) + '%';
-            document.getElementById('topPerformer').textContent = sortedData[0]?.name || '-';
-            document.getElementById('needAttention').textContent = sortedData.filter(p => p.completion < 70).length + '人';
+        // ========== 更新总览视图 ==========
+        function updateOverview(currentWeek) {
+            const people = currentData.data.map(person => {
+                const target = person.targets.reduce((sum, t) => sum + (t.target || t.target1), 0);
+                const actual = person.targets.reduce((sum, t) => sum + (t.actual || t.actual1), 0);
+                const health = calculateHealth(actual, target, currentWeek);
+                return { ...person, target, actual, health };
+            }).sort((a, b) => b.health.score - a.health.score);
 
-            // 更新图表
-            updateCharts(sortedData);
+            // 更新卡片
+            const avgCompletion = people.reduce((sum, p) => sum + p.health.completionProgress, 0) / people.length;
+            const avgHealth = people.reduce((sum, p) => sum + p.health.score, 0) / people.length;
             
+            document.getElementById('avgCompletion').textContent = avgCompletion.toFixed(1) + '%';
+            document.getElementById('avgHealth').textContent = avgHealth.toFixed(1) + '%';
+            document.getElementById('topPerformer').textContent = people[0]?.name || '-';
+            
+            const counts = {
+                excellent: people.filter(p => p.health.score >= 110).length,
+                good: people.filter(p => p.health.score >= 95 && p.health.score < 110).length,
+                warning: people.filter(p => p.health.score >= 80 && p.health.score < 95).length,
+                danger: people.filter(p => p.health.score >= 60 && p.health.score < 80).length,
+                critical: people.filter(p => p.health.score < 60).length
+            };
+            
+            document.getElementById('count-excellent').textContent = counts.excellent;
+            document.getElementById('count-good').textContent = counts.good;
+            document.getElementById('count-warning').textContent = counts.warning;
+            document.getElementById('warningCount').textContent = counts.warning + counts.danger + counts.critical + '人';
+            document.getElementById('count-danger').textContent = counts.danger;
+            document.getElementById('dangerCount').textContent = counts.danger + counts.critical + '人';
+            document.getElementById('count-critical').textContent = counts.critical;
+
             // 更新表格
-            updateTable(sortedData);
-        }
-
-        function updateCharts(data) {
-            // 排名图
-            const ctx1 = document.getElementById('rankingChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: data.map(p => p.name),
-                    datasets: [{
-                        label: '完成度(%)',
-                        data: data.map(p => p.completion.toFixed(1)),
-                        backgroundColor: data.map(p => 
-                            p.completion >= 90 ? '#10b981' :
-                            p.completion >= 70 ? '#f59e0b' : '#ef4444'
-                        ),
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 150 } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // 分类图
-            const categories = {};
-            data.forEach(p => {
-                if (!categories[p.type]) categories[p.type] = { sum: 0, count: 0 };
-                categories[p.type].sum += p.completion;
-                categories[p.type].count++;
-            });
-            
-            const ctx2 = document.getElementById('categoryChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(categories),
-                    datasets: [{
-                        data: Object.values(categories).map(c => (c.sum / c.count).toFixed(1)),
-                        backgroundColor: ['#667eea', '#10b981', '#f59e0b', '#3b82f6']
-                    }]
-                },
-                options: { responsive: true }
-            });
-        }
-
-        function updateTable(data) {
             const tbody = document.getElementById('detailTable');
-            let html = '';
-            let rank = 1;
-            
-            data.forEach((person, pIdx) => {
-                person.targets.forEach((target, tIdx) => {
-                    const isFirst = tIdx === 0;
-                    const medal = rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank;
-                    const statusClass = person.completion >= 90 ? 'bg-green-100 text-green-700' : 
-                                       person.completion >= 70 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700';
-                    const statusText = person.completion >= 90 ? '优秀' : person.completion >= 70 ? '良好' : '需关注';
-                    
-                    html += `
-                        <tr class="border-b hover:bg-gray-50 fade-in ${!isFirst ? 'border-t border-dashed' : ''}">
-                            ${isFirst ? `<td class="px-4 py-3 font-bold text-lg" rowspan="${person.targets.length}">${medal}</td>` : ''}
-                            ${isFirst ? `<td class="px-4 py-3 font-semibold text-lg" rowspan="${person.targets.length}">${person.name}</td>` : ''}
-                            ${isFirst ? `<td class="px-4 py-3" rowspan="${person.targets.length}"><span class="px-2 py-1 rounded text-sm ${person.type === '私域' ? 'bg-pink-100 text-pink-700' : person.type === '公域' ? 'bg-blue-100 text-blue-700' : person.type === '转化运营' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}">${person.type}</span></td>` : ''}
-                            <td class="px-4 py-3 text-gray-700">${target.name}</td>
-                            <td class="px-4 py-3 text-right font-mono text-gray-600">${target.target.toLocaleString()}</td>
-                            <td class="px-4 py-3 text-right font-mono font-semibold ${target.actual >= target.target ? 'text-green-600' : 'text-gray-700'}">${target.actual.toLocaleString()}</td>
-                            ${isFirst ? `<td class="px-4 py-3" rowspan="${person.targets.length}"><div class="flex items-center"><div class="w-20 bg-gray-200 rounded-full h-2 mr-2"><div class="h-2 rounded-full ${person.completion >= 90 ? 'bg-green-500' : person.completion >= 70 ? 'bg-yellow-500' : 'bg-red-500'}" style="width: ${Math.min(person.completion, 100)}%"></div></div><span class="font-bold ${person.completion >= 90 ? 'text-green-600' : person.completion >= 70 ? 'text-yellow-600' : 'text-red-600'}">${person.completion.toFixed(1)}%</span></div></td>` : ''}
-                            ${isFirst ? `<td class="px-4 py-3" rowspan="${person.targets.length}"><span class="px-3 py-1 rounded-full text-sm font-medium ${statusClass}">${statusText}</span></td>` : ''}
-                        </tr>
-                    `;
-                });
-                rank++;
-            });
-            
-            tbody.innerHTML = html;
+            tbody.innerHTML = people.map((p, idx) => {
+                const remaining = p.target - p.actual;
+                const remainingWeeks = TOTAL_WEEKS - currentWeek;
+                const weeklyPressure = remainingWeeks > 0 ? (remaining / remainingWeeks) : 0;
+                const avgWeekly = p.actual / currentWeek;
+                const pressureRatio = avgWeekly > 0 ? (weeklyPressure / avgWeekly) : 0;
+                
+                let pressureText = '正常';
+                let pressureColor = 'text-green-600';
+                if (pressureRatio > 1.5) { pressureText = '巨大'; pressureColor = 'text-red-600'; }
+                else if (pressureRatio > 1.2) { pressureText = '较大'; pressureColor = 'text-orange-600'; }
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-3 py-3 font-bold">${idx + 1}</td>
+                        <td class="px-3 py-3 font-semibold">${p.name}</td>
+                        <td class="px-3 py-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.type}</span></td>
+                        <td class="px-3 py-3 text-right font-mono">${p.target.toLocaleString()}</td>
+                        <td class="px-3 py-3 text-right font-mono font-semibold">${p.actual.toLocaleString()}</td>
+                        <td class="px-3 py-3 text-right">
+                            <div class="w-20 bg-gray-200 rounded-full h-1.5 inline-block mr-2">
+                                <div class="h-1.5 rounded-full bg-blue-500" style="width: ${Math.min(p.health.completionProgress, 100)}%"></div>
+                            </div>
+                            ${p.health.completionProgress.toFixed(1)}%
+                        </td>
+                        <td class="px-3 py-3 text-right text-gray-500">${p.health.timeProgress.toFixed(1)}%</td>
+                        <td class="px-3 py-3 text-center">
+                            <div class="inline-block px-3 py-1 rounded-lg text-white font-bold ${p.health.className}">
+                                ${p.health.score.toFixed(1)}%
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-center">
+                            <span class="px-2 py-1 rounded text-xs font-medium" style="background-color: ${p.health.color}20; color: ${p.health.color}">
+                                ${p.health.status}
+                            </span>
+                        </td>
+                        <td class="px-3 py-3 text-right ${pressureColor}">
+                            ${pressureText}
+                            <div class="text-xs text-gray-400">周均需${Math.round(weeklyPressure)}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        // 页面加载时自动获取数据
+        // ========== Tab切换 ==========
+        function switchTab(tabName) {
+            ['overview', 'weekly', 'trend'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active');
+                document.getElementById(`tab-${t}`).classList.add('text-gray-500');
+            });
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-500');
+        }
+
+        // ========== 初始化 ==========
         window.onload = loadData;
     </script>
 </body>
