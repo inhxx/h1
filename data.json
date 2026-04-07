@@ -183,16 +183,16 @@
           {
             "name": "xwx站内",
             "target": 3610,
-            "actual": 46,
+            "actual": 1046,
             "target2": 1.7,
             "actual2": 1,
             "target3": 15301,
-            "actual3": 5010
+            "actual3": 5054
           },
           {
             "name": "yk站内",
             "target": 8254,
-            "actual": 59.5,
+            "actual": 2196,
             "target2": 1.7,
             "actual2": 1,
             "target3": 48779,
@@ -201,7 +201,7 @@
           {
             "name": "应用商店",
             "target": 1437,
-            "actual": 4,
+            "actual": 169,
             "target2": 1.7,
             "actual2": 1,
             "target3": 9695,
@@ -210,7 +210,7 @@
           {
             "name": "活动增长",
             "target": 350,
-            "actual": 3,
+            "actual": 28,
             "target2": 1.7,
             "actual2": 1,
             "target3": 1776,
@@ -226,20 +226,20 @@
           {
             "name": "特训-商务X",
             "target": 4133,
-            "actual": 20,
+            "actual": 253.5,
             "target2": 1.1,
-            "actual2": 0.89,
+            "actual2": 0.63,
             "target3": 10654,
             "actual3": 3089
           },
           {
             "name": "特训-商务-大搜",
             "target": 1322,
-            "actual": 38,
+            "actual": 564.5,
             "target2": 1.4,
             "actual2": 1.2,
             "target3": 16800,
-            "actual3": 1789
+            "actual3": 1642
           }
         ]
       },
@@ -251,9 +251,9 @@
           {
             "name": "特训-商务-B站",
             "target": 1470,
-            "actual": 22,
+            "actual": 96,
             "target2": 1.3,
-            "actual2": 0.66,
+            "actual2": 0.47,
             "target3": 19830,
             "actual3": 3517
           }
@@ -269,9 +269,9 @@
             "target": 1076,
             "actual": 4,
             "target2": 1.2,
-            "actual2": 0.35,
+            "actual2": 0.17,
             "target3": 6200,
-            "actual3": 873
+            "actual3": 883
           }
         ]
       }
@@ -454,27 +454,27 @@
               "target": 448,
               "actual": 46,
               "target2": 0,
-              "actual2": 1,
+              "actual2": 0,
               "target3": 2194,
-              "actual3": 5010
+              "actual3": 1119
             },
             {
               "name": "yk站内",
               "target": 1234,
               "actual": 59.5,
               "target2": 0,
-              "actual2": 1,
+              "actual2": 0,
               "target3": 6738,
-              "actual3": 5816
+              "actual3": 809
             },
             {
               "name": "应用商店",
               "target": 141,
               "actual": 4,
               "target2": 0,
-              "actual2": 1,
+              "actual2": 0,
               "target3": 990,
-              "actual3": 937
+              "actual3": 157
             },
             {
               "name": "活动增长",
@@ -483,7 +483,7 @@
               "target2": 0,
               "actual2": 1,
               "target3": 310,
-              "actual3": 128
+              "actual3": 33
             }
           ]
         },
@@ -498,7 +498,7 @@
               "target2": 1.0,
               "actual2": 0.89,
               "target3": 2000,
-              "actual3": 3089
+              "actual3": 475
             },
             {
               "name": "特训-商务-大搜",
@@ -507,7 +507,7 @@
               "target2": 1.2,
               "actual2": 1.2,
               "target3": 2133,
-              "actual3": 1789
+              "actual3": 304
             }
           ]
         },
@@ -522,7 +522,7 @@
               "target2": 1.0,
               "actual2": 0.66,
               "target3": 2800,
-              "actual3": 3517
+              "actual3": 614
             }
           ]
         },
@@ -537,7 +537,7 @@
               "target2": 1.0,
               "actual2": 0.35,
               "target3": 800,
-              "actual3": 873
+              "actual3": 437
             }
           ]
         }
