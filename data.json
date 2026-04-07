@@ -41,7 +41,7 @@
       },
       {
         "name": "张克楠",
-        "type": "转化运营",
+        "type": "0元爆品",
         "channels": 6,
         "targets": [
           {
@@ -102,7 +102,7 @@
       },
       {
         "name": "马俊波",
-        "type": "转化运营",
+        "type": "商务进校",
         "channels": 2,
         "targets": [
           {
@@ -127,7 +127,7 @@
       },
       {
         "name": "基莉",
-        "type": "转化运营",
+        "type": "商务进校",
         "channels": 3,
         "targets": [
           {
@@ -161,7 +161,7 @@
       },
       {
         "name": "徐颖",
-        "type": "转化运营",
+        "type": "私海",
         "channels": 1,
         "targets": [
           {
@@ -177,7 +177,7 @@
       },
       {
         "name": "杜海奎",
-        "type": "前端渠道",
+        "type": "0元爆品",
         "channels": 4,
         "targets": [
           {
@@ -220,7 +220,7 @@
       },
       {
         "name": "郭思琪",
-        "type": "前端渠道",
+        "type": "商务进校",
         "channels": 2,
         "targets": [
           {
@@ -245,7 +245,7 @@
       },
       {
         "name": "王佳琦",
-        "type": "前端渠道",
+        "type": "B站",
         "channels": 1,
         "targets": [
           {
@@ -261,7 +261,7 @@
       },
       {
         "name": "贾鹏飞",
-        "type": "前端渠道",
+        "type": "KOC",
         "channels": 1,
         "targets": [
           {
@@ -317,7 +317,7 @@
         },
         {
           "name": "张克楠",
-          "type": "转化运营",
+          "type": "0元爆品",
           "channels": 6,
           "targets": [
             {
@@ -378,7 +378,7 @@
         },
         {
           "name": "马俊波",
-          "type": "转化运营",
+          "type": "商务进校",
           "channels": 2,
           "targets": [
             {
@@ -437,7 +437,7 @@
         },
         {
           "name": "徐颖",
-          "type": "转化运营",
+          "type": "私海",
           "channels": 1,
           "targets": [
             {
@@ -453,7 +453,7 @@
         },
         {
           "name": "杜海奎",
-          "type": "前端渠道",
+          "type": "0元爆品",
           "channels": 4,
           "targets": [
             {
@@ -496,7 +496,7 @@
         },
         {
           "name": "郭思琪",
-          "type": "前端渠道",
+          "type": "商务进校",
           "channels": 2,
           "targets": [
             {
@@ -521,7 +521,7 @@
         },
         {
           "name": "王佳琦",
-          "type": "前端渠道",
+          "type": "B站",
           "channels": 1,
           "targets": [
             {
@@ -537,7 +537,7 @@
         },
         {
           "name": "贾鹏飞",
-          "type": "前端渠道",
+          "type": "KOC",
           "channels": 1,
           "targets": [
             {
