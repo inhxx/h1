@@ -1,10 +1,406 @@
 {
   "currentWeek": 1,
   "totalWeeks": 26,
-  "date": "2026-04-06",
-  "history": {
-  },
+  "date": "2025-03-10",
   "current": {
-    "data": [...]
+    "week": 1,
+    "date": "2025-03-10",
+    "data": [
+      {
+        "name": "刘慧慧",
+        "type": "私域",
+        "targets": [
+          {
+            "name": "私域运营",
+            "target": 900,
+            "actual": 10,
+            "target2": 60000,
+            "actual2": 0,
+            "target3": 1500,
+            "actual3": 0
+          }
+        ],
+        "total_target": 62400,
+        "total_actual": 10,
+        "completion": 0.6,
+        "health": {
+          "score": 15.6,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.6
+        },
+        "weekly_pressure": 2437.6,
+        "pressure_ratio": 243.8,
+        "remaining": 62390
+      },
+      {
+        "name": "郭楚怡",
+        "type": "公域",
+        "targets": [
+          {
+            "name": "公域运营",
+            "target": 500,
+            "actual": 0,
+            "target2": 750,
+            "actual2": 0,
+            "target3": 2000,
+            "actual3": 0
+          }
+        ],
+        "total_target": 3250,
+        "total_actual": 0,
+        "completion": 0.0,
+        "health": {
+          "score": 0.0,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.0
+        },
+        "weekly_pressure": 130.0,
+        "pressure_ratio": 0.0,
+        "remaining": 3250
+      },
+      {
+        "name": "张克楠",
+        "type": "转化运营",
+        "targets": [
+          {
+            "name": "网校投放",
+            "target": 12974,
+            "actual": 148,
+            "target2": 100000,
+            "actual2": 34713,
+            "target3": 232,
+            "actual3": 181
+          },
+          {
+            "name": "网校站内",
+            "target": 5272,
+            "actual": 47,
+            "target2": 100000,
+            "actual2": 34713,
+            "target3": 270,
+            "actual3": 162
+          },
+          {
+            "name": "xwx站内",
+            "target": 3610,
+            "actual": 46,
+            "target2": 100000,
+            "actual2": 37942,
+            "target3": 345,
+            "actual3": 107
+          },
+          {
+            "name": "yk站内",
+            "target": 8254,
+            "actual": 60,
+            "target2": 100000,
+            "actual2": 29917,
+            "target3": 241,
+            "actual3": 236
+          },
+          {
+            "name": "应用商店",
+            "target": 1437,
+            "actual": 4,
+            "target2": 100000,
+            "actual2": 29917,
+            "target3": 170,
+            "actual3": 191
+          },
+          {
+            "name": "活动增长",
+            "target": 350,
+            "actual": 3,
+            "target2": 100000,
+            "actual2": 29917,
+            "target3": 262,
+            "actual3": 212
+          }
+        ],
+        "total_target": 31897,
+        "total_actual": 308,
+        "completion": 14.5,
+        "health": {
+          "score": 38.2,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 1.5
+        },
+        "weekly_pressure": 1261.2,
+        "pressure_ratio": 106.0,
+        "remaining": 31589
+      },
+      {
+        "name": "马俊波",
+        "type": "转化运营",
+        "targets": [
+          {
+            "name": "特训-商务X",
+            "target": 2404,
+            "actual": 20,
+            "target2": 60000,
+            "actual2": 10486,
+            "target3": 260,
+            "actual3": 160
+          },
+          {
+            "name": "特训-商务社群",
+            "target": 1729,
+            "actual": 3,
+            "target2": 60000,
+            "actual2": 10486,
+            "target3": 180,
+            "actual3": 220
+          }
+        ],
+        "total_target": 4133,
+        "total_actual": 23,
+        "completion": 4.6,
+        "health": {
+          "score": 12.1,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.5
+        },
+        "weekly_pressure": 164.6,
+        "pressure_ratio": 287.3,
+        "remaining": 4110
+      },
+      {
+        "name": "基莉",
+        "type": "转化运营",
+        "targets": [
+          {
+            "name": "特训-商务-B站",
+            "target": 1470,
+            "actual": 22,
+            "target2": 60000,
+            "actual2": 15133,
+            "target3": 210,
+            "actual3": 105
+          },
+          {
+            "name": "特训-商务-KOC",
+            "target": 1076,
+            "actual": 4,
+            "target2": 54000,
+            "actual2": 8932,
+            "target3": 170,
+            "actual3": 50
+          },
+          {
+            "name": "特训-商务-大搜",
+            "target": 1322,
+            "actual": 38,
+            "target2": 60000,
+            "actual2": 34836,
+            "target3": 450,
+            "actual3": 483
+          }
+        ],
+        "total_target": 3868,
+        "total_actual": 64,
+        "completion": 8.1,
+        "health": {
+          "score": 21.3,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.9
+        },
+        "weekly_pressure": 152.2,
+        "pressure_ratio": 89.2,
+        "remaining": 3804
+      },
+      {
+        "name": "徐颖",
+        "type": "转化运营",
+        "targets": [
+          {
+            "name": "私海热点",
+            "target": 36805,
+            "actual": 256,
+            "target2": 35000,
+            "actual2": 7549,
+            "target3": 2.6,
+            "actual3": 0.1
+          }
+        ],
+        "total_target": 71805,
+        "total_actual": 7805,
+        "completion": 6.8,
+        "health": {
+          "score": 17.9,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.8
+        },
+        "weekly_pressure": 2559.6,
+        "pressure_ratio": 87.6,
+        "remaining": 64000
+      },
+      {
+        "name": "杜海奎",
+        "type": "前端渠道",
+        "targets": [
+          {
+            "name": "xwx站内",
+            "target": 3610,
+            "actual": 46,
+            "target2": 1.7,
+            "actual2": 1.0,
+            "target3": 15301,
+            "actual3": 5010
+          },
+          {
+            "name": "yk站内",
+            "target": 8254,
+            "actual": 60,
+            "target2": 1.7,
+            "actual2": 1.0,
+            "target3": 48779,
+            "actual3": 5816
+          },
+          {
+            "name": "应用商店",
+            "target": 1437,
+            "actual": 4,
+            "target2": 1.7,
+            "actual2": 1.0,
+            "target3": 9695,
+            "actual3": 937
+          },
+          {
+            "name": "活动增长",
+            "target": 350,
+            "actual": 3,
+            "target2": 1.7,
+            "actual2": 1.0,
+            "target3": 1776,
+            "actual3": 128
+          }
+        ],
+        "total_target": 13651,
+        "total_actual": 113,
+        "completion": 5.0,
+        "health": {
+          "score": 13.2,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.6
+        },
+        "weekly_pressure": 541.8,
+        "pressure_ratio": 119.1,
+        "remaining": 13538
+      },
+      {
+        "name": "郭思琪",
+        "type": "前端渠道",
+        "targets": [
+          {
+            "name": "特训-商务X",
+            "target": 4133,
+            "actual": 20,
+            "target2": 1.1,
+            "actual2": 0.89,
+            "target3": 10654,
+            "actual3": 3089
+          },
+          {
+            "name": "特训-商务-大搜",
+            "target": 1322,
+            "actual": 38,
+            "target2": 1.4,
+            "actual2": 1.2,
+            "target3": 16800,
+            "actual3": 1789
+          }
+        ],
+        "total_target": 5455,
+        "total_actual": 58,
+        "completion": 7.7,
+        "health": {
+          "score": 20.3,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.9
+        },
+        "weekly_pressure": 215.9,
+        "pressure_ratio": 186.2,
+        "remaining": 5397
+      },
+      {
+        "name": "王佳琦",
+        "type": "前端渠道",
+        "targets": [
+          {
+            "name": "特训-商务-B站",
+            "target": 1470,
+            "actual": 22,
+            "target2": 1.3,
+            "actual2": 0.66,
+            "target3": 19830,
+            "actual3": 3517
+          }
+        ],
+        "total_target": 1470,
+        "total_actual": 22,
+        "completion": 7.5,
+        "health": {
+          "score": 19.7,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 0.9
+        },
+        "weekly_pressure": 58.2,
+        "pressure_ratio": 158.6,
+        "remaining": 1448
+      },
+      {
+        "name": "贾鹏飞",
+        "type": "前端渠道",
+        "targets": [
+          {
+            "name": "特训-商务-KOC",
+            "target": 1076,
+            "actual": 40,
+            "target2": 1.2,
+            "actual2": 0.35,
+            "target3": 6200,
+            "actual3": 873
+          }
+        ],
+        "total_target": 1076,
+        "total_actual": 40,
+        "completion": 15.1,
+        "health": {
+          "score": 39.7,
+          "status": "严重滞后",
+          "status_code": "critical",
+          "time_progress": 3.8,
+          "completion_progress": 1.5
+        },
+        "weekly_pressure": 41.4,
+        "pressure_ratio": 10.7,
+        "remaining": 1036
+      }
+    ]
+  },
+  "history": {
+    "week1": {
+      "week": 1,
+      "date": "2025-03-10",
+      "data": []
+    }
   }
 }
